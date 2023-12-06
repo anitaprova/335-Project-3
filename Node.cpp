@@ -36,3 +36,8 @@ Node *Node::getNext()
 {
 	return this->next;
 }
+
+int distance()
+{
+	
+}

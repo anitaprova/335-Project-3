@@ -1,4 +1,4 @@
-OBJECTS = 
+OBJECTS = Node.o NearestNeighbor.o GreedyTSP.o
 CXXFLAGS = -g -c -o
 LDFLAGS =
 CXX = g++
@@ -7,3 +7,9 @@ main: main.o $(OBJECTS)
 	g++ -g -o main main.o $(OBJECTS)
 
 main.o: main.cpp
+
+Node.o: Node.cpp Node.hpp
+
+NearestNeighbor.o: NearestNeighbor.cpp NearestNeighbor.hpp
+
+GreedyTSP.o: GreedyTSP.cpp GreedyTSP.hpp

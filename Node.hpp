@@ -17,4 +17,5 @@ public:
 
 	std::string getData();
 	Node *getNext();
+	int distance();
 };
