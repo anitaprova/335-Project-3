@@ -1,20 +1,14 @@
 #include <iostream>
-#include <fstream>
 #include <string>
-#include <chrono>
+#include "Vertex.hpp"
 #include "NearestNeighbor.hpp"
 #include "GreedyTSP.hpp"
 
 int main()
 {
 	// Nearest Neighbor
-	auto start_time = std::chrono::high_resolution_clock::now();
-
-
-	auto end_time = std::chrono::high_resolution_clock::now();
-	int duration = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();
-	std::cout << "Duration: " << duration << " milliseconds" << std::endl;
-	// Greedy TSP
+	//nearestNeighbor("input_files/dj38.tsp");
+	nearestNeighbor("input_files/wi29.tsp");
 
 	return 0;
 }
