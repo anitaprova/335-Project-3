@@ -6,89 +6,81 @@
 #include <cctype>
 #include <regex>
 #include <list>
+#include <iomanip>
 
 void nearestNeighbor(std::string filename)
 {
 	std::ifstream file(filename);
-	int numCities = 0;
-	std::regex dimension("^DIMENSION: \\d+");
-	std::regex coordinates("^\\d+ \\d+\\.\\d+ \\d+\\.\\d+");
-	std::smatch match;
 
 	std::string line;
 	std::list<Vertex> unvisitedVertex;
 	while (std::getline(file, line))
 	{
-		if (std::regex_match(line, dimension))
+		std::istringstream iss(line);
+		int index;
+		double x, y;
+
+		if (iss >> index >> x >> y)
 		{
-			std::regex num("\\d+");
-			std::regex_search(line, match, num);
-			numCities = std::stoi(match[0]);
-		}
-		else if (std::regex_match(line, coordinates))
-		{
-			std::regex index("\\d+");
-			std::regex_search(line, match, index);
-			int i = std::stoi(match[0]);
-
-			std::regex coords("(\\d+) (\\d+.\\d+) (\\d+.\\d+)");
-			std::regex_search(line, match, coords);
-
-			double x = std::stod(match[2]);
-			double y = std::stod(match[3]);
-
-			Vertex v(i, x, y);
+			Vertex v(index, x, y);
 			unvisitedVertex.push_back(v);
 		}
 	}
 
 	auto start_time = std::chrono::high_resolution_clock::now();
+
 	std::list<Vertex> tour;
-	int distance = 0;
+	int totalDistance = 0;
 
 	// start with the first vertex on the tour
 	auto currentCity = unvisitedVertex.begin();
 	tour.push_back(*currentCity);
-	//unvisitedVertex.erase(currentCity);
-	std::cout << "SIZE: " << numCities << "\n"; 
-	
-
-	// while (!unvisitedVertex.empty())
+	unvisitedVertex.erase(currentCity);
+	// for (auto x : unvisitedVertex)
 	// {
-	// 	auto nearestCity = unvisitedVertex.begin();
-	// 	int minDistance = std::numeric_limits<int>::max();
-
-	// 	// gets the nearest city by comparing it to every vertex
-	// 	for (auto it = unvisitedVertex.begin(); it != unvisitedVertex.end(); ++it)
-	// 	{
-	// 		int currDistance = currentCity->distance(*it);
-	// 		if (currDistance < minDistance)
-	// 		{
-	// 			minDistance = currDistance;
-	// 			nearestCity = it;
-	// 		}
-	// 	}
-
-	// 	std::cout << minDistance << "\n";
-	// 	// adds to tour and removes from unvisited list
-	// 	distance += minDistance;
-	// 	tour.push_back(*nearestCity);
-	// 	currentCity = unvisitedVertex.erase(nearestCity);
-	// 	break;
-	// }
-
-	// // Return to the starting city
-	// distance += tour.back().distance(tour.front());
-
-	// Print the tour
-	// std::cout << "Nearest Neighbor Tour: ";
-	// for (auto &city : tour)
-	// {
-	// 	std::cout << city.getID() << " ";
+	// 	x.print();
 	// }
 	// std::cout << std::endl;
 
-	// auto end_time = std::chrono::high_resolution_clock::now();
-	// int time = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();
-	// std::cout << "Total Distance: " << distance << "\nTime: " << time << std::endl;
+	while (!unvisitedVertex.empty())
+	{
+		int minDistance = std::numeric_limits<int>::max();
+		auto nearestCity = unvisitedVertex.begin();
+		//(*nearestCity).print();
+
+		for (auto it = unvisitedVertex.begin(); it != unvisitedVertex.end(); ++it)
+		{
+			int distance = currentCity->distance(*it);
+			// std::cout << "DISTANCE: " << distance << "\n";
+			if (distance < minDistance)
+			{
+				minDistance = distance;
+				nearestCity = it;
+			}
+		}
+
+		totalDistance += minDistance;
+		currentCity = nearestCity;
+		tour.push_back(*nearestCity);
+		unvisitedVertex.erase(nearestCity);
+	}
+
+	// Return to the starting city to complete the tour
+	// std::cout << currentCity->distance(tour.front()) << "\n";
+	// currentCity->print();
+	// tour.front().print();
+	totalDistance += currentCity->distance(tour.front());
+
+	// Print the tour
+	std::cout << "Nearest Neighbor Tour: ";
+	for (auto &city : tour)
+	{
+		std::cout << city.getID() << " ";
+	}
+	std::cout << tour.front().getID();
+	std::cout << std::endl;
+
+	auto end_time = std::chrono::high_resolution_clock::now();
+	int time = std::chrono::duration_cast<std::chrono::milliseconds>(end_time - start_time).count();
+	std::cout << "Total Distance: " << totalDistance << "\nTime: " << time << std::endl;
 }
